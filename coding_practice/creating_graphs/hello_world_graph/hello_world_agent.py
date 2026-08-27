@@ -5,6 +5,12 @@ from langgraph.graph import StateGraph
 # imports related to visualizing the implemented code 
 from IPython.display import Image, display
 
+# matplotlib related to vizualizing the implemented code and visualizing the code 
+import io
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+
+
 # Here we now will create an AgentState - A shared data structure that keeps track of information as your application runs.
 
 # Create a State
@@ -53,12 +59,22 @@ app = graph.compile()
 display(Image(app.get_graph().draw_mermaid_png()))
 
 # Now its time to run the graph 
-result = app.invoke({"message","ROLLEX"})
+result = app.invoke({"message":"ROLLEX"})
 print(result)
 print(result["message"])
 
 # To understand how data flows through the graph I am going to use .stream() instead of using print after every node 
-for step in app.stream({"message","ROLLEX"}):
+for step in app.stream({"message":"ROLLEX"}):
     # {'greater' : {"message": "Hey ROLLEX how is your day going?"}}
     print(step)
 
+# Here I am writing a logic to use matplotlib to visualize the implemented graph in the code 
+png_bytes = app.get_graph().draw_mermaid_png()
+img = mpimg.imread(io.BytesIO(png_bytes), format="png")
+
+plt.figure(figsize=(4, 6))
+plt.imshow(img)
+plt.axis("off")                 # hide the pixel-coordinate axes
+plt.title("hello_world_graph")
+plt.tight_layout()
+plt.show()                      # blocks until you close the window

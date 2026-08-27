@@ -15,11 +15,46 @@ class AgentState(TypedDict):
 
 # Creating a node 
 # A node is nothing but a function inside which some processing happens based on the inputs that it recieves in form of state it will generate an output in form of state in LangGraph
-class compliment_node(state : AgentState) -> AgentState :  
-    state['compliment_message'] = f"{state['compliment_message'],you are doing an amazing job learning LangGraph}!"
+def compliment_node(state : AgentState) -> AgentState :  
+    state['compliment_message'] = f"{state['compliment_message']},you are doing an amazing job learning LangGraph!"
     return state 
 
+# Now here we are gonna create a graph here 
+graph = StateGraph(AgentState)
 
+# Now we are gonna add the node in this empty graph that we have created so far
+graph.add_node("complimenter",compliment_node)
+
+# Now that we have added a node in out empty graph we also have to add start and end node in this graph
+# Adding start node
+graph.set_entry_point("complimenter")
+# Adding ending node 
+graph.set_finish_point("complimenter")
+
+# Compile the graph that we created so far
+print(f"Compiling the graph!")
+app = graph.compile()
+
+# Now its time to invoke the graph after compilation
+result = app.invoke({"compliment_message":"Ballistic"})
+print(f"Using the invoke function to run the compiled graph : {result['compliment_message']}")
+
+
+# To understand how data flows between nodes through the graph, I am going to use .stream()
+for step in app.stream({"compliment_message":"BALLISTIC"}):
+    print(f"Using .steam() to print the data flowing in the graph : {step}") 
+
+
+# Here I am writing a logic to use matplotlib to visualize the implemented graph in the code 
+png_bytes = app.get_graph().draw_mermaid_png()
+img = mpimg.imread(io.BytesIO(png_bytes), format="png")
+
+plt.figure(figsize=(4, 6))
+plt.imshow(img)
+plt.axis("off")                 # hide the pixel-coordinate axes
+plt.title("hello_world_graph")
+plt.tight_layout()
+plt.show()                      # blocks until you close the window
 
 
 

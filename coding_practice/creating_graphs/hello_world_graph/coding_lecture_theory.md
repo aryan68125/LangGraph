@@ -7,4 +7,6 @@ This document holds the theory behind how to create a graph using LangGraphs and
 4. Compile and invoke a LangGraph graph
 5. Understand how data flows trhough a single-node in LangGraph
 
+## Basic graph
+This is the graph that I will be building in this lecture as shown below in the image 
 ![Single-node LangGraph flow: START -> Node -> END](../../../documentation/documentation_images/hello_world_graph_coding_lecture_images/Pasted%20image.png)

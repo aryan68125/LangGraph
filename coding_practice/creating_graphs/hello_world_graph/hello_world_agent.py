@@ -62,16 +62,16 @@ display(Image(app.get_graph().draw_mermaid_png()))
 result = app.invoke({"message":"ROLLEX"})
 print(result)
 print(f"""
-        Printing the final result after the invoke is called
-      """)
+Printing the final result after the invoke is called
+""")
 print(result["message"])
 
 # To understand how data flows through the graph I am going to use .stream() instead of using print after every node 
 for step in app.stream({"message":"ROLLEX"}):
     # {'greater' : {"message": "Hey ROLLEX how is your day going?"}}
     print(f"""
-            Printing the Steps in a for loop using stream
-          """)
+Printing the Steps in a for loop using stream
+""")
     print(step)
 
 # Here I am writing a logic to use matplotlib to visualize the implemented graph in the code 

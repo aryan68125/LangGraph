@@ -18,6 +18,8 @@ def greeting_node(state : AgentState) -> AgentState:
     # Docs string are very important in case of langraph 
     # these docs strings will tell the llm what this function actually does
     # what actions does this function performs
+    # when you do @tool / bind_tools(), the docstring becomes the tool description in the model's schema
+    # Important NOTE : A node docstring is for humans — LangGraph never shows it to a model.
     """
     Simple node that add a greeting message to the_state
     """
@@ -49,3 +51,14 @@ app = graph.compile()
 
 # Here I am writing a code that will help you visualize this 
 display(Image(app.get_graph().draw_mermaid_png()))
+
+# Now its time to run the graph 
+result = app.invoke({"message","ROLLEX"})
+print(result)
+print(result["message"])
+
+# To understand how data flows through the graph I am going to use .stream() instead of using print after every node 
+for step in app.stream({"message","ROLLEX"}):
+    # {'greater' : {"message": "Hey ROLLEX how is your day going?"}}
+    print(step)
+

@@ -13,8 +13,8 @@ from matplotlib import image as mpimg
 # Now here I am going to define my state
 class AgentState(TypedDict):
     name : str
-    revenue : List[double]
-    result : double
+    revenue : List[float]
+    result : float
     operation : str
     answer : str
 
@@ -40,7 +40,7 @@ graph.add_node("processing_node",processing_node)
 #Adding starting node
 graph.set_entry_point("processing_node")
 #Adding finishing node
-graph.set_finish_node("processing_node")
+graph.set_finish_point("processing_node")
 
 # Now I am going to compile the graph
 print("Compiling graphs ....")
@@ -58,12 +58,13 @@ plt.tight_layout()
 plt.show()   
 
 #Now here I am going to invoke the compiled graph using .invoke() function
-name = input(f"Enter the name")
-revenue_list = list(map(double,input("Enter monthly revenue values separated by space :")))
+name = input(f"Enter the name ")
+revenue_list = list(map(float, input("Enter monthly revenue values separated by space : ").split()))
+
 print(f"Now you have to enter the operation that you want to perform : ")
 print(f"Enter '+' to perform sumission")
 print(f"Enter 'avg' to perform average")
-operation = input(f"Enter the operation that you want to perform")
+operation = input(f"Enter the operation that you want to perform : ")
 result = compiled_graph.invoke({"name":name,"revenue":revenue_list,"operation":operation})
 print(f"Using the .invoke() function to run the compiled_graph : {result}")
 

@@ -56,11 +56,11 @@ plt.show()
 
 
 # now invoking the graph using invoke function 
-answers = compile_graph.invoke({"name":"Rollex", "values":[1,2,3,4,5], "operation":"+"})
+answers = compiled_graph.invoke({"name":"Rollex", "values":[1,2,3,4,5], "operation":"+"})
 print(f"Using the invoke function to run the compiled_graph : {answers}")
 
 # now invoking the grpah using the stream function in a for loop
-for step in compiled_graph.stream({"name":"Ballistic","values":[1,2,3,4,5],"operation":"*"})
+for step in compiled_graph.stream({"name":"Ballistic","values":[1,2,3,4,5],"operation":"*"}):
    print(f"Using .stream() function to run the compiled graph : {step}") 
 
 

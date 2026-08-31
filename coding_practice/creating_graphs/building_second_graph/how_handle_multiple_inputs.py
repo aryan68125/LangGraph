@@ -18,7 +18,9 @@ class AgentState(TypedDict):
 def process_values(state: AgentState) -> AgentState :
     """This function handles multiple different inputs
     """
+    print(f"Printing state before processing : {state}")
     state["results"] = f'Well Hello there {state["name"]}! your sum = {sum(state["values"])}'
+    print(f"Printing state after processing : {state}")
     return state
 
 # Now here we are gonna create a graph here 

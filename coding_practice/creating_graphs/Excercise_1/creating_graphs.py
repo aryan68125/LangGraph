@@ -36,12 +36,14 @@ print(f"Compiling the graph!")
 app = graph.compile()
 
 # Now its time to invoke the graph after compilation
-result = app.invoke({"compliment_message":"Ballistic"})
+name_input = input("Enter the name : ")
+result = app.invoke({"compliment_message":name_input})
 print(f"Using the invoke function to run the compiled graph : {result['compliment_message']}")
 
 
 # To understand how data flows between nodes through the graph, I am going to use .stream()
-for step in app.stream({"compliment_message":"BALLISTIC"}):
+name_input_for_stream = input("Enter the name again for stream : ")
+for step in app.stream({"compliment_message":name_input_for_stream}):
     print(f"Using .steam() to print the data flowing in the graph : {step}") 
 
 

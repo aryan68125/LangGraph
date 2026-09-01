@@ -22,13 +22,13 @@ class AgentState(TypedDict):
 # Now here I am going to create a processing node 
 def processing_node(state : AgentState) -> AgentState:
     if state['operation'] == '+':
-        result = f"the total sum of your revenue is {sum(state['revenue'])}"
+        state['result'] = f"the total sum of your revenue is {sum(state['revenue'])}"
     elif state['operation'] == 'avg':
-        result = f"your average revenue is {sum(state['revenue'])/len(state['revenue'])}"
+        state['result'] = f"your average revenue is {sum(state['revenue'])/len(state['revenue'])}"
     else:
         print(f"The choices that are allowed are '+' or 'avg'")
         print(f"you are trying to perform an invalid operation")
-    state['answer'] = f"Hello {state['name']},{result}"
+    state['answer'] = f"Hello {state['name']},{state['result']}"
     return state
 
 # Now I am going to create an empty graph

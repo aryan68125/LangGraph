@@ -20,12 +20,12 @@ def first_node(state : AgentState) -> AgentState :
 
 # Here I am going to implement second node
 def second_node(state : AgentState) -> AgentState : 
-    state['answer'] = state['answer'] + "\n" + f"You are {state['age']} years old!"
+    state['answer'] = state['answer'] + " " + f"You are {state['age']} years old!"
     return state
 
 # HEre I am going to implement third node
 def third_node(state: AgentState) -> AgentState : 
-    state['answer'] = state['answer'] + "\n" + f"You have skills in :\n {state['skills']}"
+    state['answer'] = state['answer'] + " " + f"You have skills in :\n {state['skills']}"
 
 # Now here I am going to create an empty graph
 graph = StateGraph(AgentState)

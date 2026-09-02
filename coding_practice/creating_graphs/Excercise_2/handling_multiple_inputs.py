@@ -64,3 +64,5 @@ for step in compiled_graph.stream({"name":"Ballistic","values":[1,2,3,4,5],"oper
    print(f"Using .stream() function to run the compiled graph : {step}") 
 
 
+
+

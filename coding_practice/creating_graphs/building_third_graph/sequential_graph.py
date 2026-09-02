@@ -44,7 +44,7 @@ The type of edge created between the first node and the second node will be a di
 graph.add_edge("first_node","second_node")
 
 # Now we are gonna add the final node into this graph
-graph.set_final_point("second_node")
+graph.set_finish_point("second_node")
 
 # Now finally we can compile this graph
 compiled_graph = graph.compile()
@@ -67,7 +67,7 @@ print(f"Using the .invoke() method to run the compiled_graph : \n {answers}")
 
 # Now I am going to use .stream() method to run the compiled graph
 for step in compiled_graph.stream({"name":"Ballistic","age":25}):
-    print(f"Using the .stream() method to run the compiled graph : \n {step}"
+    print(f"Using the .stream() method to run the compiled graph : \n {step}")
 
 
 

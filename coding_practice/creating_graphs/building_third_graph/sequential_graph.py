@@ -21,7 +21,7 @@ def first_node(state : AgentState) -> AgentState :
 # implementing the second node
 def second_node(state : AgentState) -> AgentState:
     """This is the second node in our sequence"""
-    state["final"] = state['final'] + f"You are {state['age']} years old"
+    state["final"] = state['final'] + " " + f"You are {state['age']} years old"
     return state
 
 # Create an empty graph

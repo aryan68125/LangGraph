@@ -25,7 +25,7 @@ def second_node(state : AgentState) -> AgentState :
 
 # HEre I am going to implement third node
 def third_node(state: AgentState) -> AgentState : 
-    state['answer'] = state['answer'] + " " + f"You have skills in :\n {state['skills']}"
+    state['answer'] = state['answer'] + " " + f"You have skills in : {state['skills']}"
     return state
 
 # Now here I am going to create an empty graph
@@ -76,6 +76,6 @@ name = input(f"Enter the name : \n")
 age = int(input("Enter the age : \n"))
 skills = input("Enter the skills separated by space : \n").split()
 for step in compiled_graph.stream({"name":name,"age":age,"skills":skills}):
-    print(f"Using the .stream() method to run the comiled_graph : \n {step['answer']}")
+    print(f"Using the .stream() method to run the comiled_graph : \n {step}")
 
 

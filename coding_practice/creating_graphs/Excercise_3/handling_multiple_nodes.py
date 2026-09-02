@@ -38,12 +38,12 @@ graph.add_node("third_node",third_node)
 # Now here I am going to add the starting node in this graph
 graph.set_entry_point("first_node")
 
+# Now here I am going to add the final node in this graph
+graph.set_finish_point("third_node")
+
 # Now here I am going to connect first, second and third node togeather using .add_edge() method
 graph.add_edge("first_node","second_node")
 graph.add_edge("second_node","third_node")
-
-# Now here I am going to add the final node in this graph
-graph.set_finish_point("third_node")
 
 # Now I can finally compile the graph that I have created so far 
 compiled_graph = graph.compile()

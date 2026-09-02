@@ -71,6 +71,7 @@ answers = compiled_graph.invoke({"name":name,"age":age,"skills":skills})
 print(f"Using the .invoke() method to run the compiled_graph : \n {answers}")
 
 # Now I am going to use the .stream() method to run the compiled graph
+print("\n \n")
 print("Enter the things below so that you can run the compiled graph using the .stream() method \n")
 name = input(f"Enter the name : \n")
 age = int(input("Enter the age : \n"))

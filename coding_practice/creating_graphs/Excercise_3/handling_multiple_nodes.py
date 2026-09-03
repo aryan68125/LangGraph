@@ -32,8 +32,11 @@ def third_node(state: AgentState) -> AgentState :
 graph = StateGraph(AgentState)
 
 # Here I am going to add the first_node, second_node and third_node in this empty graph that I have created so far 
+# Enter first node
 graph.add_node("first_node",first_node)
+# Enter second node
 graph.add_node("second_node",second_node)
+# Enter third node
 graph.add_node("third_node",third_node)
 
 # Now here I am going to add the starting node in this graph

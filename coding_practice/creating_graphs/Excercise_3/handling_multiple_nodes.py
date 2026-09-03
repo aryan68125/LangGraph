@@ -64,7 +64,6 @@ plt.title("handling_multiple_nodes_in_a_graph")
 plt.tight_layout()
 plt.show()   
 
-
 # Now I am going to use .invoke() method to run the compiled graph
 print("Enter the things below so that you can run the compiled graph using .invoke() methos : \n")
 name = input(f"Enter the name :\n")

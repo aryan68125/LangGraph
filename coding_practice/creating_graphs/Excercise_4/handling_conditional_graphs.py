@@ -133,7 +133,7 @@ plt.show()
 
 # now invoking the graph using invoke function 
 answers = compiled_graph.invoke({"num1":15.2, "num2":13.4, "operator":"+"})
-print(f"Using the invoke function to run the compiled_graph : {result}")
+print(f"Using the invoke function to run the compiled_graph : {answers}")
 
 # now invoking the grpah using the stream function in a for loop
 for step in compiled_graph.stream({"num1":15.2, "num2":13.4, "operator":"-"}):

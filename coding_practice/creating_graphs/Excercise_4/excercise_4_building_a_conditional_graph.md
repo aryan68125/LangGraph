@@ -8,3 +8,6 @@ This excercise is where we will learn about how to create a conditional graph wh
 
 **Main Goal :** How to use "**add_conditional_edges()**"
 
+## What we have done earlier 
+In the previous excercise 2 there we have already used conditional logic in the code but that was inside a node 
+So we can say that we have implemented a conditional node but this time we are going to implement a conditional graph instead of a conditional node in this excercise i.e : Here we will be implementing conditional logic on the overall graph structure instead of just one node. 

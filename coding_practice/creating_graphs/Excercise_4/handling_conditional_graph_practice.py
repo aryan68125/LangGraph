@@ -130,7 +130,7 @@ print(answers)
 # Now I am going the run the compiled graph using .stream() function
 print("Using .stream() function to run the compiled graph : ")
 print("\n")
-for step in compiled_graph.stream({"num1":num1,"num2":num2,"operator":operator})
+for step in compiled_graph.stream({"num1":num1,"num2":num2,"operator":operator}):
     print(step)
 
 

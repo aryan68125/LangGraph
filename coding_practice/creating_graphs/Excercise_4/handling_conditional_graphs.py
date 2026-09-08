@@ -12,7 +12,6 @@ import io
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
-
 class AgentState(TypedDict):
     num1 : float
     num2 : float

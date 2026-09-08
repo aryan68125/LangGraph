@@ -33,4 +33,10 @@ def divisor(state : AgentState) -> AgentState:
     return state
 
 # Create the final node that will present the result in a human readable form
-# This nor
+# This node will come exactly before the end node
+def answer_humanizer(state : AgentState) -> AgentState:
+    state['answer'] = f"{state['num1']} {state['operator']} {state['num2'] = {state['result']}}"
+
+# Now here I am going to create a node that will be responsible to activate the nodes based on the choice made by the user 
+def decision_node(state : AgentState):
+

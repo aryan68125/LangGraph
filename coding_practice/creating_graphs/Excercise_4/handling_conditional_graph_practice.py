@@ -35,7 +35,7 @@ def divisor(state : AgentState) -> AgentState:
 # Create the final node that will present the result in a human readable form
 # This node will come exactly before the end node
 def answer_humanizer(state : AgentState) -> AgentState:
-    state['answer'] = f"{state['num1']} {state['operator']} {state['num2']} = {state['result']}}"
+    state['answer'] = f"{state['num1']} {state['operator']} {state['num2']} = {state['result']}"
 
 # Now here I am going to create a node called router that will be responsible to activate the nodes based on the choice made by the user 
 # this router node only returns the edges not the agent state like other nodes hence how I put this node in the graph will be different from the other nodes that I add in the graph
@@ -66,7 +66,7 @@ graph.add_node("divisor",divisor)
 # Now I am going to add the router node (the decision making node) into the graph
 # The reason this router node has a different way of adding it into the graph is because this particular type of node in langgraph is accepting state but it is not returning a state unlike other nodes instead it is returning an edge based on the operator chosen by the user 
 # lambda state:state --> meanse that the input and output state in this node is the same hence signifying that this particular node is not making any changes in the state like what normally happens in a normal node in langgraph
-graph.add_node("router",lambda state:state):
+graph.add_node("router",lambda state:state)
 
 
 # Now I am going to add edges in the graph and connect all the nodes in the graph
@@ -98,7 +98,7 @@ graph.add_edge("answer_humanizer",END)
 compiled_graph = graph.compile()
 
 
-Here I am going to write a logic to plot the compiled graph using matplotlib 
+# Here I am going to write a logic to plot the compiled graph using matplotlib 
 png_bytes = compiled_graph.get_graph().draw_mermaid_png()
 img = mpimg.imread(io.BytesIO(png_bytes), format="png")
 plt.figure(figsize=(4, 6))

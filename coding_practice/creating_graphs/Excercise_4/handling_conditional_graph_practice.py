@@ -36,6 +36,7 @@ def divisor(state : AgentState) -> AgentState:
 # This node will come exactly before the end node
 def answer_humanizer(state : AgentState) -> AgentState:
     state['answer'] = f"{state['num1']} {state['operator']} {state['num2']} = {state['result']}"
+    return state
 
 # Now here I am going to create a node called router that will be responsible to activate the nodes based on the choice made by the user 
 # this router node only returns the edges not the agent state like other nodes hence how I put this node in the graph will be different from the other nodes that I add in the graph
@@ -68,6 +69,9 @@ graph.add_node("divisor",divisor)
 # lambda state:state --> meanse that the input and output state in this node is the same hence signifying that this particular node is not making any changes in the state like what normally happens in a normal node in langgraph
 graph.add_node("router",lambda state:state)
 
+# Now finally I can add this node answer_humanizer in the graph
+graph.add_node("answer_humanizer",answer_humanizer)
+
 
 # Now I am going to add edges in the graph and connect all the nodes in the graph
 graph.add_edge(START,"router")
@@ -80,7 +84,7 @@ graph.add_conditional_edges(
                 "addition_operation_edge" : "adder",
                 "subtraction_operation_edge" : "subtractor",
                 "multiplication_operation_edge" : "multiplier",
-                "division_operation_edge" : "divisor",
+                "division_operation_edge" : "divisor"
             }
         )
 

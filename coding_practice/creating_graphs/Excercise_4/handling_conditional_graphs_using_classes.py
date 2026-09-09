@@ -74,15 +74,80 @@ class FinalAnswerNode:
 graph = StateGraph(AgentState)
 
 # Now here I am going to create the objects of all the nodes that I have created using classes 
+# conditional node
 router = Router()
 operator_error = OperatorSelectionErrorNode()
 adder = AdderNode()
 subtractor = SubtractorNode()
 multiplier = MultiplierNode()
+# conditional node
 divisor_decision = DivisorDecisionRouterNode()
 divisor = DivisorNode()
 divisor_error = DivisorErrorNode()
 final_answer = FinalAnswerNode()
 
 # Now Here I am going to start adding nodes in this empty graph that I have created so far 
-graph.add_node()
+# I am going to add the conditional node like this where I am going to pass in a lambda function where input and output state will be the same signifying that the decision node is not making any changes in the agent's state since the decision node reutns the edge that is supposed to be executed based on the decisions made that is dependent on the input provided to these decision node.
+graph.add_node("router", lambda state: state)
+graph.add_node("divisor_decision", lambda state: state)
+# Here I am going to add the rest of the nodes in the graph that returns the state and performs operations on the state.
+graph.add_node("operator_error", operator_error)
+graph.add_node("adder", adder)
+graph.add_node("subtractor", subtractor)
+graph.add_node("multiplier", multiplier)
+graph.add_node("divisor", divisor)
+graph.add_node("divisor_error", divisor_error)
+graph.add_node("final_answer", final_answer)
+
+
+# Now here I am going to connect all the nodes in the graph using edges in the graph
+graph.add_edge(START,"router")
+graph.add_conditional_edges(
+            "router", # source node 
+            router,
+            {
+                "adder" : "adder",
+                "subtractor" : "subtractor",
+                "multiplier" : "multiplier",
+                "divisor_decision" : "divisor_decision",
+                "operator_error" : "operator_error"
+            }
+        )
+graph.add_conditional_edges(
+            "divisor_decision", # source node 
+            divisor_decision,
+            {
+                "divisor" : "divisor",
+                "divisor_error" : "divisor_error"
+            }
+        )
+graph.add_edge("adder", "final_answer")
+graph.add_edge("subtractor", "final_answer")
+graph.add_edge("multiplier", "final_answer")
+graph.add_edge("divisor", "final_answer")
+graph.add_edge("divisor_error", "final_answer")
+graph.add_edge("operator_error", "final_answer")
+graph.add_edge("final_answer",END)
+
+# Now that all the nodes has been added and connected to each other using edges in a graph I can now go ahead and compile the graph
+compiled_graph = graph.compile()
+
+# I am going to enter some inputs now at run time 
+num1 = float(input("Enter the first number : "))
+num2 = flaot(input("Enter the second number : "))
+operator = (input("Enter the operation that you want to perform on these two numbers ('+', '-', '*', '/')"))
+
+# Here I am going to write a logic to plot the compiled graph using matplotlib 
+png_bytes = compiled_graph.get_graph().draw_mermaid_png()
+img = mpimg.imread(io.BytesIO(png_bytes), format="png")
+plt.figure(figsize=(4, 6))
+plt.imshow(img)
+plt.axis("off")                 # hide the pixel-coordinate axes
+plt.title("handling_multiple_inputs_graph")
+plt.tight_layout()
+plt.show()   
+
+# Now I am going to run the compiled graph here
+result = compiled_graph.invoke({"num1":num1,"num2":num2,"operator":operator})
+
+

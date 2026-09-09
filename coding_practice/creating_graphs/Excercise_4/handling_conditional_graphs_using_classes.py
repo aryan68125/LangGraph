@@ -29,7 +29,7 @@ class Router:
 class OperatorSelectionErrorNode:
     def __call__(self, state : AgentState) -> AgentState:
         state['result'] = 0
-        state['answer'] = f"The system only supports (+, - , * , /) : This operation {state['operator']} is invalid"
+        state['answer'] = f"The system only supports (+, - , * , /) : This operation '{state['operator']}' is invalid"
         return state
 
 # Add the nodes using classes that perform the actual numeric operations in the graphs

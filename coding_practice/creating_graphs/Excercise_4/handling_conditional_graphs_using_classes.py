@@ -27,7 +27,7 @@ class Router:
             return "operator_error_edge"
             
 class OperatorSelectionErrorNode:
-    def __call__(self, state : AgentState) -> AgentSate:
+    def __call__(self, state : AgentState) -> AgentState:
         state['result'] = 0
         state['answer'] = f"The system only supports (+, - , * , /) : This operation {state['operator']} is invalid"
 
@@ -135,7 +135,7 @@ compiled_graph = graph.compile()
 
 # I am going to enter some inputs now at run time 
 num1 = float(input("Enter the first number : "))
-num2 = flaot(input("Enter the second number : "))
+num2 = float(input("Enter the second number : "))
 operator = (input("Enter the operation that you want to perform on these two numbers ('+', '-', '*', '/')"))
 
 # Here I am going to write a logic to plot the compiled graph using matplotlib 

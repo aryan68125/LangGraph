@@ -23,7 +23,8 @@ class Router:
             return "multiplier_edge"
         elif state['operator'] == '/':
             return "divisor_decision_decision_edge"
-        else : 
+        else :
+            return "operator_error_edge"
             
 class OperatorSelectionErrorNode:
     def __call__(self, state : AgentState) -> AgentSate:
@@ -106,19 +107,19 @@ graph.add_conditional_edges(
             "router", # source node 
             router,
             {
-                "adder" : "adder",
-                "subtractor" : "subtractor",
-                "multiplier" : "multiplier",
-                "divisor_decision" : "divisor_decision",
-                "operator_error" : "operator_error"
+                "adder_edge" : "adder", # edge_name : destination_node_name
+                "subtractor_edge" : "subtractor",
+                "multiplier_edge" : "multiplier",
+                "divisor_decision_decision_edge" : "divisor_decision",
+                "operator_error_edge" : "operator_error"
             }
         )
 graph.add_conditional_edges(
             "divisor_decision", # source node 
             divisor_decision,
             {
-                "divisor" : "divisor",
-                "divisor_error" : "divisor_error"
+                "divisor_edge" : "divisor", # edge name : destination node name
+                "divide_by_zero_error_edge" : "divisor_error"
             }
         )
 graph.add_edge("adder", "final_answer")

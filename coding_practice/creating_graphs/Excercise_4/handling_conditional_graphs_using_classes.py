@@ -150,5 +150,6 @@ plt.show()
 
 # Now I am going to run the compiled graph here
 result = compiled_graph.invoke({"num1":num1,"num2":num2,"operator":operator})
+print(result)
 
 

@@ -1,5 +1,5 @@
 from typing import TypedDict
-from langgraph.graph import TypedDict, START, END
+from langgraph.graph import StateGraph, START, END
 
 import io
 import matplotlib.pyplot as plt

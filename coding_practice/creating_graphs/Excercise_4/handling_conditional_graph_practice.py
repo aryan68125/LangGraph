@@ -56,13 +56,11 @@ def decision_node(state : AgentState):
 # Now here I am going to create an empty graph
 graph = StateGraph(AgentState)
 
-
 # Now here I am going add all the normal nodes that is responsible for processing num1 and num2 into the graph
 graph.add_node("adder",adder)
 graph.add_node("subtractor",subtractor)
 graph.add_node("multiplier",multiplier)
 graph.add_node("divisor",divisor)
-
 
 # Now I am going to add the router node (the decision making node) into the graph
 # The reason this router node has a different way of adding it into the graph is because this particular type of node in langgraph is accepting state but it is not returning a state unlike other nodes instead it is returning an edge based on the operator chosen by the user 
@@ -123,7 +121,6 @@ print(f"The operations that this system can perform are + , - , * , /")
 print("\n")
 operator = input("Enter the operator now : ")
 print("\n")
-
 
 # Now I am going to run this compiled graph using .invoke() function
 answers = compiled_graph.invoke({"num1":num1, "num2":num2, "operator":operator})

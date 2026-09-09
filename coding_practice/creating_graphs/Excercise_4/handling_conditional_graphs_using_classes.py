@@ -126,8 +126,6 @@ graph.add_edge("adder", "final_answer")
 graph.add_edge("subtractor", "final_answer")
 graph.add_edge("multiplier", "final_answer")
 graph.add_edge("divisor", "final_answer")
-graph.add_edge("divisor_error", "final_answer")
-graph.add_edge("operator_error", "final_answer")
 graph.add_edge("final_answer",END)
 
 # Now that all the nodes has been added and connected to each other using edges in a graph I can now go ahead and compile the graph

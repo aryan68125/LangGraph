@@ -101,7 +101,6 @@ graph.add_node("divisor", divisor)
 graph.add_node("divisor_error", divisor_error)
 graph.add_node("final_answer", final_answer)
 
-
 # Now here I am going to connect all the nodes in the graph using edges in the graph
 graph.add_edge(START,"router")
 graph.add_conditional_edges(

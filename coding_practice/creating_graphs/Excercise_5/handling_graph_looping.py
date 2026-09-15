@@ -2,6 +2,7 @@ from langgraph.graph import StateGraph , START, END
 import random
 from typing import Dict, List , TypedDict
 
+# Common agent state maintianed globally in langgraph to maintain the state of the agent
 class AgentState(TypedDict):
     name : str
     number : List[int]

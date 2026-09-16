@@ -11,4 +11,4 @@ class AgentState(TypedDict):
 def GreetingNode : 
     def __call__(self, state : AgentState) -> AgentState:
         """Greeting Node which says hi to the person"""
-        state("name")
+        state("This is where I began my journey as an ai agent developer")

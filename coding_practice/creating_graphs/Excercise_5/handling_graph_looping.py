@@ -9,7 +9,29 @@ class AgentState(TypedDict):
     counter : int
 
 # This is a sample node that carry out greetings related task in the graph
-def GreetingNode : 
+class GreetingNode : 
     def __call__(self, state : AgentState) -> AgentState:
         """Greeting Node which says hi to the person"""
-        state("This is the first node in the langgraph program")
+        state['name'] = f"Well hello there, {state['name']}"
+        state['counter'] = 0
+        return state
+
+# This is the random node that creates a random state
+class RandomNode :
+    def __call__(self,state : AgentState) -> AgentState:
+        """Generates a random number from 0 to 10"""
+        state['number'].append(random.randint(0,10))
+        state['counter'] += 1
+        return state
+
+# This is node is the decision node in langgraph
+class ShouldContinue:
+    def __call__(self, state : AgentState) -> AgentState:
+        """Function to decide what to do next"""
+        if state['counter'] < 5:
+            print(f"Entering LOOP {state['counter']}")
+            return "loop"
+        else:
+            return "exit"
+
+

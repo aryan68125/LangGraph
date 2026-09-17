@@ -86,6 +86,81 @@ class DivisionErrorNode:
         state['answer'] f"Divide by Zero ERROR"
         return state
 
+class LoopDecisionNode:
+    def __call__(self, state : AgentState) -> AgentState:
+        if state['operator'] == 'q':
+            return "exit_edge"
+        else:
+            return "loop_edge"
+
+class EndEdgeNode:
+    def __call__(self, state : AgentState) -> AgentState:
+        state['answer'] = f"Program Terminated!"
+        return state
+
+# Here I am going to create an empty graph 
+graph = StateGraph(AgentState)
+
+# Create objects of the nodes before adding them to this empty graph
+# Add greeting node
+greeting_message_node = GreetingsNode()
+
+# Objects of nodes that actually perform operations on the numbers
+add_node = AddNode()
+subtract_node = SubtractNode()
+multiplier_node = MultiplierNode()
+division_node = DivisionNode()
+
+# objects of router nodes 
+operator_router_node = OperatorDecisionNode()
+division_router_node = DivisionDecisionNode()
+looping_router_node = LoopDecisionNode()
+
+# error handling node 
+operator_error_node = OperatorErrorNode()
+division_error_node = DivisionErrorNode()
+
+# end edge node
+end_edge_node = EndEdgeNode()
+
+# Add nodes to this empty graph 
+# Add greeting node in the graph
+graph.add_node("greeting_message_node",greeting_message_node)
+
+# Add Router nodes
+graph.add_node("operator_router_node", lambda state: state)
+graph.add_node("division_router_node", lambda state: state)
+graph.add_node("looping_router_node", lambda state: state)
+
+# Add nodes that perform operation ADD, SUBTRACTION , MULTIPLICATION, DIVISION
+graph.add_node("add_node",add_node)
+graph.add_node("subtract_node",subtract_node)
+graph.add_node("multiplier_node",multiplier_node)
+graph.add_node("division_node",division_node)
+
+# Add error handeling nodes in the graph
+graph.add_node("operator_error_node",operator_error_node)
+graph.add_node("division_error_node",division_error_node)
+
+
+# add the last node in the graph
+graph.add_node("end_edge_node",end_edge_node)
+
+
+# Now here I am going to connect these nodes using edges
+graph.add_edge(START, "greeting_message_node")
+graph.add_edge("greeting_message_node","operator_router_node")
+graph.add_conditional_edges(
+            "operator_router_node", # Source node
+            operator_router_node, # action 
+            {
+                "add_node_edge" # edge_name : target_node_name
+                "subtract_node_edge"
+                "multiplier_node_edge"
+                "division_node_decision_edge"
+            }
+        )
+
 
 
 

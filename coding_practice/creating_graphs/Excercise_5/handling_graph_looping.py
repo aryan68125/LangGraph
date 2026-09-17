@@ -83,3 +83,6 @@ plt.title("handling_multiple_inputs_graph")
 plt.tight_layout()
 plt.show()   
 
+
+
+

@@ -30,8 +30,17 @@ class ShouldContinue:
         """Function to decide what to do next"""
         if state['counter'] < 5:
             print(f"Entering LOOP {state['counter']}")
+            # return the edge name 
             return "loop"
         else:
+            # return the edge name
             return "exit"
+
+# Create an empty graph here
+graph = StateGraph(AgentState)
+
+# Now we can add nodes in this empty graph
+graph.add_node("greeting")
+
 
 

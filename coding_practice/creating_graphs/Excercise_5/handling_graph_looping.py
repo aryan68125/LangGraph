@@ -8,6 +8,7 @@ class AgentState(TypedDict):
     number : List[int]
     counter : int
 
+# This is a sample node that carry out greetings related task in the graph
 def GreetingNode : 
     def __call__(self, state : AgentState) -> AgentState:
         """Greeting Node which says hi to the person"""

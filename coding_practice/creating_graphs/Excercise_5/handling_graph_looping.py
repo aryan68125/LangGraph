@@ -2,6 +2,11 @@ from langgraph.graph import StateGraph , START, END
 import random
 from typing import Dict, List , TypedDict
 
+import io
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+
+
 # Common agent state maintianed globally in langgraph to maintain the state of the agent globally throught the program run time lifetime
 class AgentState(TypedDict):
     name : str
@@ -39,8 +44,42 @@ class ShouldContinue:
 # Create an empty graph here
 graph = StateGraph(AgentState)
 
+# Now here I am going to create class objects 
+should_continue = ShouldContinue()
+random_node = RandomNode()
+greeting_node = GreetingNode()
+
 # Now we can add nodes in this empty graph
-graph.add_node("greeting")
+graph.add_node("greeting_node",greeting_node)
+graph.add_node("random_node",random_node)
+
+# Now I am going to add edges 
+graph.add_edge(START, "greeting_node")
+graph.add_edge("greeting_node","random_node")
+graph.add_conditional_edges(
+            "random_node", #source node
+            should_continue, # rounting node (Action)
+            {
+                "loop" : "random_node", #self-loop
+                "exit" : END # End graph
+            }
+
+        )
+
+# Now here I am going to compile the graph
+compiled_graph = graph.compile()
 
 
+result = compiled_graph.invoke({"name":"ROLLEX","number": [],"counter":0})
+print(f"result = {result}")
+
+# Here I am going to write a logic to plot the compiled graph using matplotlib 
+png_bytes = compiled_graph.get_graph().draw_mermaid_png()
+img = mpimg.imread(io.BytesIO(png_bytes), format="png")
+plt.figure(figsize=(4, 6))
+plt.imshow(img)
+plt.axis("off")                 # hide the pixel-coordinate axes
+plt.title("handling_multiple_inputs_graph")
+plt.tight_layout()
+plt.show()   
 

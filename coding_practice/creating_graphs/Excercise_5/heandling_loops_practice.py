@@ -142,10 +142,8 @@ graph.add_node("division_node",division_node)
 graph.add_node("operator_error_node",operator_error_node)
 graph.add_node("division_error_node",division_error_node)
 
-
 # add the last node in the graph
 graph.add_node("end_edge_node",end_edge_node)
-
 
 # Now here I am going to connect these nodes using edges
 graph.add_edge(START, "greeting_message_node")

@@ -20,14 +20,30 @@ class GreetingsNode:
     def __call__(self, state : AgentState) -> AgentState :
         """This node will greete the user and explain in brief on what the system does
          in short"""
-         state['answer'] = f"Well, Hello there. Welcome to LangGraph calculator here you will use graphs to perform operations on two numbers based on the operator that you select"
-         return state
+        state['answer'] = (
+            "Well, hello there! Welcome to the LangGraph calculator. "
+            "Enter an operator (+, -, *, /) and two numbers, or 'q' to quit."
+        )         
+        return state
+
+class GetUserInputNode:
+    def __call__(self, state : AgentState) -> AgentState: 
+        """Collects the operator and the two operands along with the quitting character"""
+        operator = input("Enter the operator (+, -, *, /) or 'q' to quite:").strip()
+        state['operator'] = operator
+        if operator.lower() != 'q':
+            state['num1'] = float(input("Enter first number : "))
+            state['num2'] = float(input("Enter the second number : "))
+        return state
 
 # This is the router node that will be used to make decisions which node to execute based on the operator selected by the user at run-time 
 class OperatorDecisionNode:
-    def __call__(self, state : AgentState) -> AgentState:
+    def __call__(self, state : AgentState) -> str:
         """This is the node that decides which edge to execute based on the selected operator by the user"""
-        if state['operator'] == '+':
+        state['operator'] = state['operator'].strip().lower()
+        if state['operator'] == 'q':
+            return "exit_node_edge"
+        elif state['operator'] == '+':
             return "add_node_edge"
         elif state['operator'] == '-':
             return "subtract_node_edge"
@@ -69,7 +85,7 @@ class MultiplierNode:
 
 # This is a router node that will decide which edge to execute based on if num2 is zero or not
 class DivisionDecisionNode:
-    def __call__(self, state : AgentState) -> AgentState:
+    def __call__(self, state : AgentState) -> str:
         """This node will make decision which edge to execute"""
         if state['num2'] == 0:
             return "divide_by_zero_edge"
@@ -87,13 +103,6 @@ class DivisionErrorNode:
         state['result'] = 0
         state['answer'] f"Divide by Zero ERROR"
         return state
-
-class LoopDecisionNode:
-    def __call__(self, state : AgentState) -> AgentState:
-        if state['operator'] == 'q':
-            return "exit_edge"
-        else:
-            return "loop_edge"
 
 class EndEdgeNode:
     def __call__(self, state : AgentState) -> AgentState:
@@ -158,10 +167,20 @@ graph.add_conditional_edges(
                 "add_node_edge" : "add_node", # edge_name : target_node_name
                 "subtract_node_edge" : "subtract_node",
                 "multiplier_node_edge" : "multiplier_node",
+                "division_node_decision_edge" : "division_router_node",
+                "operator_error_edge": "operator_error_node",
+            }
+        )
+graph.add_conditional_edges(
+            "operator_router_node", # Source node
+            operator_router_node, # action 
+            {
+                "add_node_edge" : "add_node", # edge_name : target_node_name
+                "subtract_node_edge" : "subtract_node",
+                "multiplier_node_edge" : "multiplier_node",
                 "division_node_decision_edge" : "division_router_node"
             }
         )
-
 
 
 

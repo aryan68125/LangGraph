@@ -1,45 +1,52 @@
 from typing import TypedDict
 from langgraph.graph import StateGraph, START, END
 
-# imports related matplot lib 
-# I am using this library to print the graph that I have created here
+# imports related to matplotlib
+# used to visualize the graph that I have created here
 import io
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
-# Here I am going to create aa global agent state that I am going to use to manage and track the sate of this graph 
-class AgentState(TypedDict):
-    num1 : float
-    num2 : float
-    operator : str
-    result : float
-    answer : str
 
-# Here I am going to create a greetings node where the user will be greeted by the system and explain what this program does 
+class AgentState(TypedDict):
+    num1: float
+    num2: float
+    operator: str
+    result: float
+    answer: str
+
+
 class GreetingsNode:
-    def __call__(self, state : AgentState) -> AgentState :
-        """This node will greete the user and explain in brief on what the system does
-         in short"""
+    def __call__(self, state: AgentState) -> AgentState:
         state['answer'] = (
             "Well, hello there! Welcome to the LangGraph calculator. "
             "Enter an operator (+, -, *, /) and two numbers, or 'q' to quit."
-        )         
+        )
+        print(state['answer'])
         return state
+
 
 class GetUserInputNode:
-    def __call__(self, state : AgentState) -> AgentState: 
-        """Collects the operator and the two operands along with the quitting character"""
-        operator = input("Enter the operator (+, -, *, /) or 'q' to quite:").strip()
+    def __call__(self, state: AgentState) -> AgentState:
+        """Collects the operator and the two operands, unless quitting."""
+        operator = input("\nEnter the operator (+, -, *, /) or 'q' to quit: ").strip()
         state['operator'] = operator
         if operator.lower() != 'q':
-            state['num1'] = float(input("Enter first number : "))
-            state['num2'] = float(input("Enter the second number : "))
+            state['num1'] = float(input("Enter first number: "))
+            state['num2'] = float(input("Enter the second number: "))
         return state
 
-# This is the router node that will be used to make decisions which node to execute based on the operator selected by the user at run-time 
+
+# ---------------------------------------------------------------------------
+# Decision logic. These callables return an edge-label string, not state —
+# they are only ever passed to add_conditional_edges, never to add_node.
+# The nodes they're attached to ("operator_router_node",
+# "division_router_node") are separate: plain `lambda state: state`
+# passthroughs registered with add_node, whose only job is to give the
+# decision a real position in the graph without touching state.
+# ---------------------------------------------------------------------------
 class OperatorDecisionNode:
-    def __call__(self, state : AgentState) -> str:
-        """This is the node that decides which edge to execute based on the selected operator by the user"""
+    def __call__(self, state: AgentState) -> str:
         state['operator'] = state['operator'].strip().lower()
         if state['operator'] == 'q':
             return "exit_node_edge"
@@ -51,138 +58,185 @@ class OperatorDecisionNode:
             return "multiplier_node_edge"
         elif state['operator'] == '/':
             return "division_node_decision_edge"
-        else : 
+        else:
             return "operator_error_edge"
 
-# This node is responsible to print the error message when user selects the operator that is not supported by the system
-class OperatorErrorNode:
-    def __call__(self, state : AgentState) -> AgentState:
-        state['result'] = 0
-        state['answer'] = f"You have selected `{state['operator']}` but the system only supports (+, -, *, /) operators. Select the correct operator and try again!"
-        return state
 
-# Now I am going to create number processing nodes here 
-class AddNode:
-    def __call__(self, state : AgentState) -> AgentState:
-        """This node is will add num1 and num2"""
-        state['result'] = state['num1'] + state['num2']
-        state['answer'] = f"{state['num1']} {state['operator']} {state['num2']} = {state['result']}"
-        return state
-
-class SubtractNode:
-    def __call__(self, state : AgentState) -> AgentState:
-        """This node will subtract num1 and num2"""
-        state['result'] = state['num1'] - state['num2']
-        state['answer'] = f"{state['num1']} {state['operator']} {state['num2']} = {state['result']}"
-        return state
-
-class MultiplierNode:
-    def __call__(self, state : AgentState) -> AgentState:
-        """This node will multiply two numbers"""
-        state['result'] = state['num1'] * state['num2']
-        state['answer'] = f"{state['num1']} {state['operator']} {state['num2']} = {state['result']}"
-        return state
-
-# This is a router node that will decide which edge to execute based on if num2 is zero or not
 class DivisionDecisionNode:
-    def __call__(self, state : AgentState) -> str:
-        """This node will make decision which edge to execute"""
+    def __call__(self, state: AgentState) -> str:
         if state['num2'] == 0:
             return "divide_by_zero_edge"
         else:
             return "division_node_edge"
 
+
+class OperatorErrorNode:
+    def __call__(self, state: AgentState) -> AgentState:
+        state['result'] = 0
+        state['answer'] = (
+            f"You have selected `{state['operator']}` but the system only "
+            f"supports (+, -, *, /) operators. Select the correct operator and try again!"
+        )
+        print(state['answer'])
+        return state
+
+
+class AddNode:
+    def __call__(self, state: AgentState) -> AgentState:
+        state['result'] = state['num1'] + state['num2']
+        state['answer'] = f"{state['num1']} {state['operator']} {state['num2']} = {state['result']}"
+        print(state['answer'])
+        return state
+
+
+class SubtractNode:
+    def __call__(self, state: AgentState) -> AgentState:
+        state['result'] = state['num1'] - state['num2']
+        state['answer'] = f"{state['num1']} {state['operator']} {state['num2']} = {state['result']}"
+        print(state['answer'])
+        return state
+
+
+class MultiplierNode:
+    def __call__(self, state: AgentState) -> AgentState:
+        state['result'] = state['num1'] * state['num2']
+        state['answer'] = f"{state['num1']} {state['operator']} {state['num2']} = {state['result']}"
+        print(state['answer'])
+        return state
+
+
 class DivisionNode:
-    def __call__(self, state : AgentState) -> AgentState:
+    def __call__(self, state: AgentState) -> AgentState:
         state['result'] = state['num1'] / state['num2']
         state['answer'] = f"{state['num1']} {state['operator']} {state['num2']} = {state['result']}"
+        print(state['answer'])
         return state
+
 
 class DivisionErrorNode:
-    def __call__(self, state : AgentState) -> AgentState:
+    def __call__(self, state: AgentState) -> AgentState:
         state['result'] = 0
-        state['answer'] f"Divide by Zero ERROR"
+        state['answer'] = "Divide by Zero ERROR"   # <- was missing '=' in your draft
+        print(state['answer'])
         return state
+
 
 class EndEdgeNode:
-    def __call__(self, state : AgentState) -> AgentState:
-        state['answer'] = f"Program Terminated!"
+    def __call__(self, state: AgentState) -> AgentState:
+        state['answer'] = "Program Terminated!"
+        print(state['answer'])
         return state
 
-# Here I am going to create an empty graph 
+
+# ---------------------------------------------------------------------------
+# Build the graph
+# ---------------------------------------------------------------------------
 graph = StateGraph(AgentState)
 
-# Create objects of the nodes before adding them to this empty graph
-# Add greeting node
 greeting_message_node = GreetingsNode()
 user_input_node = GetUserInputNode()
 
-# Objects of nodes that actually perform operations on the numbers
 add_node = AddNode()
 subtract_node = SubtractNode()
 multiplier_node = MultiplierNode()
 division_node = DivisionNode()
 
-# objects of router nodes 
-operator_router_node = OperatorDecisionNode()
-division_router_node = DivisionDecisionNode()
+operator_router_node = OperatorDecisionNode()   # decision callable (router fn)
+division_router_node = DivisionDecisionNode()   # decision callable (router fn)
 
-# error handling node 
 operator_error_node = OperatorErrorNode()
 division_error_node = DivisionErrorNode()
 
-# end edge node
 end_edge_node = EndEdgeNode()
 
-# Add nodes to this empty graph 
-# Add greeting node in the graph
-graph.add_node("greeting_message_node",greeting_message_node)
-# Add a node to take input from the user at runtime 
-graph.add_node("user_input_node",user_input_node)
+# register real nodes
+graph.add_node("greeting_message_node", greeting_message_node)
+graph.add_node("user_input_node", user_input_node)
 
-# Add Router nodes
+# passthrough nodes: identity function, so state in == state out.
+# These exist purely to give the decision a position in the graph; the
+# actual decision logic lives in the router callables above, wired in
+# via add_conditional_edges below — never passed to add_node.
 graph.add_node("operator_router_node", lambda state: state)
 graph.add_node("division_router_node", lambda state: state)
 
-# Add nodes that perform operation ADD, SUBTRACTION , MULTIPLICATION, DIVISION
-graph.add_node("add_node",add_node)
-graph.add_node("subtract_node",subtract_node)
-graph.add_node("multiplier_node",multiplier_node)
-graph.add_node("division_node",division_node)
+graph.add_node("add_node", add_node)
+graph.add_node("subtract_node", subtract_node)
+graph.add_node("multiplier_node", multiplier_node)
+graph.add_node("division_node", division_node)
 
-# Add error handeling nodes in the graph
-graph.add_node("operator_error_node",operator_error_node)
-graph.add_node("division_error_node",division_error_node)
+graph.add_node("operator_error_node", operator_error_node)
+graph.add_node("division_error_node", division_error_node)
 
-# add the last node in the graph
-graph.add_node("end_edge_node",end_edge_node)
+graph.add_node("end_edge_node", end_edge_node)
 
-# Now here I am going to connect these nodes using edges
+# fixed edges
 graph.add_edge(START, "greeting_message_node")
-graph.add_edge("greeting_message_node","user_input_node")
-# Here I am making connection between the processing nodes and the decision router nodes that routes the signals based on the operator selected by the user 
-graph.add_conditional_edges(
-            "user_input_node", # Source node
-            operator_router_node, # action 
-            {
-                "exit_node_edge" : "end_edge_node",
-                "add_node_edge" : "add_node", # edge_name : target_node_name
-                "subtract_node_edge" : "subtract_node",
-                "multiplier_node_edge" : "multiplier_node",
-                "division_node_decision_edge" : "division_router_node",
-                "operator_error_edge": "operator_error_node",
-            },
-        )
+graph.add_edge("greeting_message_node", "user_input_node")
 
-# Here I am going to connect the edges in the node where division related decisions is being made 
+# user_input_node -> operator_router_node is a PLAIN edge (not conditional).
+# The decision happens one step later, once we're sitting at the
+# passthrough node — this is what makes it consistent with how division
+# is handled below.
+graph.add_edge("user_input_node", "operator_router_node")
+
 graph.add_conditional_edges(
-        "division_router_node",
-        division_router_node,
-            {
-                "divide_by_zero_edge" : "division_error_node",
-                "division_node_edge" : "division_node",
-            },
-        )
+    "operator_router_node",       # source: the passthrough node
+    operator_router_node,         # router: the OperatorDecisionNode instance
+    {
+        "exit_node_edge": "end_edge_node",
+        "add_node_edge": "add_node",
+        "subtract_node_edge": "subtract_node",
+        "multiplier_node_edge": "multiplier_node",
+        "division_node_decision_edge": "division_router_node",
+        "operator_error_edge": "operator_error_node",
+    },
+)
+
+graph.add_conditional_edges(
+    "division_router_node",       # source: the passthrough node
+    division_router_node,         # router: the DivisionDecisionNode instance
+    {
+        "divide_by_zero_edge": "division_error_node",
+        "division_node_edge": "division_node",
+    },
+)
+
+# every terminal calculation/error node loops back for another round
+graph.add_edge("add_node", "user_input_node")
+graph.add_edge("subtract_node", "user_input_node")
+graph.add_edge("multiplier_node", "user_input_node")
+graph.add_edge("division_node", "user_input_node")
+graph.add_edge("division_error_node", "user_input_node")
+graph.add_edge("operator_error_node", "user_input_node")
+
+# quitting ends the graph
+graph.add_edge("end_edge_node", END)
+
+app = graph.compile()
+
+
+def visualize_graph() -> None:
+    """Optional: call manually if you want to see the graph structure.
+    Needs network access (LangGraph renders via the mermaid.ink API)."""
+    png_bytes = app.get_graph().draw_mermaid_png()
+    img = mpimg.imread(io.BytesIO(png_bytes), format="png")
+    plt.imshow(img)
+    plt.axis("off")
+    plt.show()
+
+
+if __name__ == "__main__":
+    initial_state: AgentState = {
+        "num1": 0.0,
+        "num2": 0.0,
+        "operator": "",
+        "result": 0.0,
+        "answer": "",
+    }
+    # default recursion_limit (25) counts graph steps, not loop iterations —
+    # raised generously since this loop is meant to run until the user quits
+    app.invoke(initial_state, config={"recursion_limit": 1000})
 
 
 

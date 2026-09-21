@@ -1,6 +1,8 @@
 from typing import TypedDict
 from langgraph.graph import StateGraph, START, END
 
+# imports related matplot lib 
+# I am using this library to print the graph that I have created here
 import io
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg

@@ -115,6 +115,7 @@ graph = StateGraph(AgentState)
 # Create objects of the nodes before adding them to this empty graph
 # Add greeting node
 greeting_message_node = GreetingsNode()
+user_input_node = GetUserInputNode()
 
 # Objects of nodes that actually perform operations on the numbers
 add_node = AddNode()
@@ -136,11 +137,12 @@ end_edge_node = EndEdgeNode()
 # Add nodes to this empty graph 
 # Add greeting node in the graph
 graph.add_node("greeting_message_node",greeting_message_node)
+# Add a node to take input from the user at runtime 
+graph.add_node("user_input_node",user_input_node)
 
 # Add Router nodes
 graph.add_node("operator_router_node", lambda state: state)
 graph.add_node("division_router_node", lambda state: state)
-graph.add_node("looping_router_node", lambda state: state)
 
 # Add nodes that perform operation ADD, SUBTRACTION , MULTIPLICATION, DIVISION
 graph.add_node("add_node",add_node)
@@ -157,28 +159,29 @@ graph.add_node("end_edge_node",end_edge_node)
 
 # Now here I am going to connect these nodes using edges
 graph.add_edge(START, "greeting_message_node")
-graph.add_edge("greeting_message_node","operator_router_node")
+graph.add_edge("greeting_message_node","user_input_node")
 # Here I am making connection between the processing nodes and the decision router nodes that routes the signals based on the operator selected by the user 
 graph.add_conditional_edges(
-            "operator_router_node", # Source node
+            "user_input_node", # Source node
             operator_router_node, # action 
             {
+                "exit_node_edge" : "end_edge_node",
                 "add_node_edge" : "add_node", # edge_name : target_node_name
                 "subtract_node_edge" : "subtract_node",
                 "multiplier_node_edge" : "multiplier_node",
                 "division_node_decision_edge" : "division_router_node",
                 "operator_error_edge": "operator_error_node",
-            }
+            },
         )
+
+# Here I am going to connect the edges in the node where division related decisions is being made 
 graph.add_conditional_edges(
-            "operator_router_node", # Source node
-            operator_router_node, # action 
+        "division_router_node",
+        division_router_node,
             {
-                "add_node_edge" : "add_node", # edge_name : target_node_name
-                "subtract_node_edge" : "subtract_node",
-                "multiplier_node_edge" : "multiplier_node",
-                "division_node_decision_edge" : "division_router_node"
-            }
+                "divide_by_zero_edge" : "division_error_node",
+                "division_node_edge" : "division_node",
+            },
         )
 
 

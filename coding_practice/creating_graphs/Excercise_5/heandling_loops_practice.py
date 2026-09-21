@@ -125,7 +125,6 @@ division_node = DivisionNode()
 # objects of router nodes 
 operator_router_node = OperatorDecisionNode()
 division_router_node = DivisionDecisionNode()
-looping_router_node = LoopDecisionNode()
 
 # error handling node 
 operator_error_node = OperatorErrorNode()

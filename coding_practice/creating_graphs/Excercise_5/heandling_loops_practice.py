@@ -150,14 +150,15 @@ graph.add_node("end_edge_node",end_edge_node)
 # Now here I am going to connect these nodes using edges
 graph.add_edge(START, "greeting_message_node")
 graph.add_edge("greeting_message_node","operator_router_node")
+# Here I am making connection between the processing nodes and the decision router nodes that routes the signals based on the operator selected by the user 
 graph.add_conditional_edges(
             "operator_router_node", # Source node
             operator_router_node, # action 
             {
-                "add_node_edge" # edge_name : target_node_name
-                "subtract_node_edge"
-                "multiplier_node_edge"
-                "division_node_decision_edge"
+                "add_node_edge" : "add_node", # edge_name : target_node_name
+                "subtract_node_edge" : "subtract_node",
+                "multiplier_node_edge" : "multiplier_node",
+                "division_node_decision_edge" : "division_router_node"
             }
         )
 

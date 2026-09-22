@@ -103,6 +103,8 @@ graph.add_node("final_answer", final_answer)
 
 # Now here I am going to connect all the nodes in the graph using edges in the graph
 graph.add_edge(START,"router")
+
+# Connect router nodes with each other using edges
 graph.add_conditional_edges(
             "router", # source node 
             router,

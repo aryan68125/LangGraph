@@ -225,7 +225,6 @@ def visualize_graph() -> None:
     plt.axis("off")
     plt.show()
 
-
 if __name__ == "__main__":
     initial_state: AgentState = {
         "num1": 0.0,

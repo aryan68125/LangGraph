@@ -36,7 +36,6 @@ class GetUserInputNode:
             state['num2'] = float(input("Enter the second number: "))
         return state
 
-
 # ---------------------------------------------------------------------------
 # Decision logic. These callables return an edge-label string, not state —
 # they are only ever passed to add_conditional_edges, never to add_node.

@@ -215,7 +215,6 @@ graph.add_edge("end_edge_node", END)
 
 app = graph.compile()
 
-
 def visualize_graph() -> None:
     """Optional: call manually if you want to see the graph structure.
     Needs network access (LangGraph renders via the mermaid.ink API)."""

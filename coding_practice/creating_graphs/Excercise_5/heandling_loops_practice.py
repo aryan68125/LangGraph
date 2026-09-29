@@ -15,7 +15,6 @@ class AgentState(TypedDict):
     result: float
     answer: str
 
-
 class GreetingsNode:
     def __call__(self, state: AgentState) -> AgentState:
         state['answer'] = (

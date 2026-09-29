@@ -24,7 +24,6 @@ class GreetingsNode:
         print(state['answer'])
         return state
 
-
 class GetUserInputNode:
     def __call__(self, state: AgentState) -> AgentState:
         """Collects the operator and the two operands, unless quitting."""

@@ -55,8 +55,7 @@ class OperatorDecisionNode:
         elif state['operator'] == '/':
             return "division_node_decision_edge"
         else:
-            return "operator_error_edge"
-
+            return "operator_err
 
 class DivisionDecisionNode:
     def __call__(self, state: AgentState) -> str:

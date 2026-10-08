@@ -64,7 +64,6 @@ class DivisionDecisionNode:
         else:
             return "division_node_edge"
 
-
 class OperatorErrorNode:
     def __call__(self, state: AgentState) -> AgentState:
         state['result'] = 0

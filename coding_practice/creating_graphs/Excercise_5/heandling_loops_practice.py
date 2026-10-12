@@ -74,7 +74,6 @@ class OperatorErrorNode:
         print(state['answer'])
         return state
 
-
 class AddNode:
     def __call__(self, state: AgentState) -> AgentState:
         state['result'] = state['num1'] + state['num2']

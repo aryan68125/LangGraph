@@ -14,6 +14,15 @@ class AgentState(TypedDict):
     result: float
     answer: str
 
+def visualize_graph() -> None:
+    """Optional: call manually if you want to see the graph structure.
+    Needs network access (LangGraph renders via the mermaid.ink API)."""
+    png_bytes = app.get_graph().draw_mermaid_png()
+    img = mpimg.imread(io.BytesIO(png_bytes), format="png")
+    plt.imshow(img)
+    plt.axis("off")
+    plt.show()
+
 class GreetingsNode:
     def __call__(self, state: AgentState) -> AgentState:
         state['answer'] = (
@@ -117,6 +126,7 @@ class EndEdgeNode:
     def __call__(self, state: AgentState) -> AgentState:
         state['answer'] = "Program Terminated!"
         print(state['answer'])
+        visualize_graph()  # Display graph when user enters q
         return state
 
 # ---------------------------------------------------------------------------
@@ -205,15 +215,6 @@ graph.add_edge("operator_error_node", "user_input_node")
 graph.add_edge("end_edge_node", END)
 
 app = graph.compile()
-
-def visualize_graph() -> None:
-    """Optional: call manually if you want to see the graph structure.
-    Needs network access (LangGraph renders via the mermaid.ink API)."""
-    png_bytes = app.get_graph().draw_mermaid_png()
-    img = mpimg.imread(io.BytesIO(png_bytes), format="png")
-    plt.imshow(img)
-    plt.axis("off")
-    plt.show()
 
 if __name__ == "__main__":
     initial_state: AgentState = {

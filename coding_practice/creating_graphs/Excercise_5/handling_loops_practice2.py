@@ -55,6 +55,20 @@ class GetUserInputNode:
 class test:
     pass
 
+# Here I am going to write nodes that are responsible to show error messages when something goes wrong 
+# This node is responsible for showing the error message when the user tries to select the option that is not supported by the system 
+class OperatorErrorNode:
+    def __call__(self, state : AgentState) -> AgentState:
+        state['result'] = 0
+        state['answer'] = (
+                    f"You have selected this operation = `{state['operator']}`"
+                    f"This operation is not supported by the system"
+                    f"The system only supports these operations (+, -, *, /)"
+                    f"Please select the correct operation and try again!"
+                )
+        print(state['answer'])
+        return state
+
 #------------------------------------------------------------------------------------------
 # Decision logic : 
 # 1. The nodes that serves as a decision nodes in a graph that do not return any state instead they return an edge based on the decision made inside the decision logic based on the input that these nodes get 
@@ -81,6 +95,7 @@ class DivisionDecisionNode:
     def __call__(self, state : AgentState) -> str:
         if state['num2'] == 0:
             return "divide_by_zero_error_edge"
-
+        else:
+            return "divison_node_edge"
 
 compiled_graph = graph.compile()

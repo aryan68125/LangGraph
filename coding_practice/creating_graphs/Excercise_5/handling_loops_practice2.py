@@ -51,6 +51,10 @@ class GetUserInputNode:
             state['num2'] = float(input("\n Enter the second number : "))
         return state
 
+# Now here I am going to write nodes that performs operations on two numbers and returns an updated global state
+class test:
+    pass
+
 #------------------------------------------------------------------------------------------
 # Decision logic : 
 # 1. The nodes that serves as a decision nodes in a graph that do not return any state instead they return an edge based on the decision made inside the decision logic based on the input that these nodes get 
@@ -61,8 +65,22 @@ class OperatorDecisionNode:
         state['operator'] = state['operator'].strip().lower()
         if state['operator'] == 'q':
             return "exit_node_edge"
-        elif state['operator'] == '+'
+        elif state['operator'] == '+':
             return "add_node_edge"
-        elif state['operator'] == ''
+        elif state['operator'] == '-':
+            return "subtract_node_edge"
+        elif state['operator'] == '*':
+            return "multiplier_node_edge"
+        elif state['operator'] == '/':
+            return "division_decision_node_edge"
+        else:
+            return "operator_error_edge"
+
+# This decision node decides if the divide by zero error has occured or not based on if the second number is a zero or not 
+class DivisionDecisionNode:
+    def __call__(self, state : AgentState) -> str:
+        if state['num2'] == 0:
+            return "divide_by_zero_error_edge"
+
 
 compiled_graph = graph.compile()

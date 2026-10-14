@@ -1,81 +1,61 @@
-"""
-This program is written to demonstrate how to handle loops in langgraph 
-"""
-
 from typing import TypedDict
 from langgraph.graph import StateGraph, START, END
 
 # imports related to matplotlib
-# Using these imports I want to visualize the graph that is being created here in the code 
+# used to visualize the graph that I have created here
 import io
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
-# This is the main global state that this agent will use to manage the agent state in this program
 class AgentState(TypedDict):
-    num1 : float
-    num2 : float
-    operator : str
-    result : float
-    answer : str
+    num1: float
+    num2: float
+    operator: str
+    result: float
+    answer: str
 
-# This function is used to print the graph in matplotlib canvas so that I am able to visualize it and understand the struture of graph created in langgraph 
 def visualize_graph() -> None:
-    """
-    Operational : Call this function when the user presses 'q' to quite the langgraph loop and exits the program 
-    """
-    png_bytes = compiled_graph.get_graph().draw_mermaid_png()
-    image = mpimg.imread(io.BytesIO(png_bytes), format = "png")
-    plt.imshow(image)
+    """Optional: call manually if you want to see the graph structure.
+    Needs network access (LangGraph renders via the mermaid.ink API)."""
+    png_bytes = app.get_graph().draw_mermaid_png()
+    img = mpimg.imread(io.BytesIO(png_bytes), format="png")
+    plt.imshow(img)
     plt.axis("off")
     plt.show()
 
-# This is the first node in langgraph graph whose job is to show the welcome message to the user when the program starts 
+# ---------------------------------------------------------------------------
+# Work nodes. None of them print: each one only sets state['answer'].
+# The common print_node (further down) is the single place that prints it.
+# ---------------------------------------------------------------------------
 class GreetingsNode:
-    def __call__(self, state : AgentState) -> AgentState:
+    def __call__(self, state: AgentState) -> AgentState:
         state['answer'] = (
-                    "Well, hello there! Welcome to the LangGraph calculator"
-                    "Here I have implemented a calculator using graphs created using langgraph in python programming language"
-                    "Enter an operator (+, -, *, /) and two numbers or press 'q' to quite the program"
-                )
-        print(state['answer'])
+            "Well, hello there! Welcome to the LangGraph calculator. "
+            "Enter an operator (+, -, *, /) and two numbers, or 'q' to quit."
+        )
         return state
 
-# This node is responsible to get the input from the user at runtime and set operator , num1 and num2 in global state for this langgraph program
 class GetUserInputNode:
-    def __call__(self, state : AgentState) -> AgentState:
-        operator = input("\n Enter the operator ( +, -, *, /) or 'q' to quit the langgraph program : ").strip()
+    def __call__(self, state: AgentState) -> AgentState:
+        """Collects the operator and the two operands, unless quitting."""
+        operator = input("\nEnter the operator (+, -, *, /) or 'q' to quit: ").strip()
         state['operator'] = operator
         if operator.lower() != 'q':
-            state['num1'] = float(input("\n Enter the first number : "))
-            state['num2'] = float(input("\n Enter the second number : "))
+            state['num1'] = float(input("Enter first number: "))
+            state['num2'] = float(input("Enter the second number: "))
         return state
 
-# Now here I am going to write nodes that performs operations on two numbers and returns an updated global state
-class test:
-    pass
-
-# Here I am going to write nodes that are responsible to show error messages when something goes wrong 
-# This node is responsible for showing the error message when the user tries to select the option that is not supported by the system 
-class OperatorErrorNode:
-    def __call__(self, state : AgentState) -> AgentState:
-        state['result'] = 0
-        state['answer'] = (
-                    f"You have selected this operation = `{state['operator']}`"
-                    f"This operation is not supported by the system"
-                    f"The system only supports these operations (+, -, *, /)"
-                    f"Please select the correct operation and try again!"
-                )
-        print(state['answer'])
-        return state
-
-#------------------------------------------------------------------------------------------
-# Decision logic : 
-# 1. The nodes that serves as a decision nodes in a graph that do not return any state instead they return an edge based on the decision made inside the decision logic based on the input that these nodes get 
-#------------------------------------------------------------------------------------------
-# This decision node is responsible for making decision which operation to operform on two input numbers based on the input that it recieves in the operator key in the global state set by the GetUserInputNode based on the inputs recieved from the user at runtime 
+# ---------------------------------------------------------------------------
+# Decision logic. These callables return an edge-label string, not state —
+# they are only ever passed to add_conditional_edges, never to add_node.
+# The nodes the first two are attached to ("operator_router_node",
+# "division_router_node") are separate: plain lambda state: state
+# passthroughs registered with add_node, whose only job is to give the
+# decision a real position in the graph without touching state.
+# PostPrintDecisionNode hangs directly off the real print_node instead.
+# ---------------------------------------------------------------------------
 class OperatorDecisionNode:
-    def __call__(self, state : AgentState) -> str:
+    def __call__(self, state: AgentState) -> str:
         state['operator'] = state['operator'].strip().lower()
         if state['operator'] == 'q':
             return "exit_node_edge"
@@ -86,16 +66,196 @@ class OperatorDecisionNode:
         elif state['operator'] == '*':
             return "multiplier_node_edge"
         elif state['operator'] == '/':
-            return "division_decision_node_edge"
+            return "division_node_decision_edge"
         else:
             return "operator_error_edge"
 
-# This decision node decides if the divide by zero error has occured or not based on if the second number is a zero or not 
 class DivisionDecisionNode:
-    def __call__(self, state : AgentState) -> str:
+    def __call__(self, state: AgentState) -> str:
         if state['num2'] == 0:
-            return "divide_by_zero_error_edge"
+            return "divide_by_zero_edge"
         else:
-            return "divison_node_edge"
+            return "division_node_edge"
 
-compiled_graph = graph.compile()
+class PostPrintDecisionNode:
+    """After printing: quit (visualize + end) or loop back for more input."""
+    def __call__(self, state: AgentState) -> str:
+        if state['operator'].strip().lower() == 'q':
+            return "quit_edge"
+        return "continue_edge"
+
+class OperatorErrorNode:
+    def __call__(self, state: AgentState) -> AgentState:
+        state['result'] = 0
+        state['answer'] = (
+            f"You have selected {state['operator']} but the system only "
+            f"supports (+, -, *, /) operators. Select the correct operator and try again!"
+        )
+        return state
+
+class AddNode:
+    def __call__(self, state: AgentState) -> AgentState:
+        state['result'] = state['num1'] + state['num2']
+        state['answer'] = f"{state['num1']} {state['operator']} {state['num2']} = {state['result']}"
+        return state
+
+
+class SubtractNode:
+    def __call__(self, state: AgentState) -> AgentState:
+        state['result'] = state['num1'] - state['num2']
+        state['answer'] = f"{state['num1']} {state['operator']} {state['num2']} = {state['result']}"
+        return state
+
+
+class MultiplierNode:
+    def __call__(self, state: AgentState) -> AgentState:
+        state['result'] = state['num1'] * state['num2']
+        state['answer'] = f"{state['num1']} {state['operator']} {state['num2']} = {state['result']}"
+        return state
+
+class DivisionNode:
+    def __call__(self, state: AgentState) -> AgentState:
+        state['result'] = state['num1'] / state['num2']
+        state['answer'] = f"{state['num1']} {state['operator']} {state['num2']} = {state['result']}"
+        return state
+
+
+class DivisionErrorNode:
+    def __call__(self, state: AgentState) -> AgentState:
+        state['result'] = 0
+        state['answer'] = "Divide by Zero ERROR"   # <- was missing '=' in your draft
+        return state
+
+
+class PrintAnswerNode:
+    """Common node: the only place that prints state['answer']."""
+    def __call__(self, state: AgentState) -> AgentState:
+        print(state['answer'])
+        return state
+
+
+class EndEdgeNode:
+    def __call__(self, state: AgentState) -> AgentState:
+        state['answer'] = "Program Terminated!"
+        return state
+
+
+class VisualizeNode:
+    """Runs after 'Program Terminated!' has been printed, then the graph ends."""
+    def __call__(self, state: AgentState) -> AgentState:
+        visualize_graph()  # Display graph when user enters q
+        return state
+
+# ---------------------------------------------------------------------------
+# Build the graph
+# ---------------------------------------------------------------------------
+graph = StateGraph(AgentState)
+
+greeting_message_node = GreetingsNode()
+user_input_node = GetUserInputNode()
+
+add_node = AddNode()
+subtract_node = SubtractNode()
+multiplier_node = MultiplierNode()
+division_node = DivisionNode()
+
+operator_router_node = OperatorDecisionNode()   # decision callable (router fn)
+division_router_node = DivisionDecisionNode()   # decision callable (router fn)
+post_print_router = PostPrintDecisionNode()     # decision callable (router fn)
+
+operator_error_node = OperatorErrorNode()
+division_error_node = DivisionErrorNode()
+
+print_node = PrintAnswerNode()                  # common node: prints state['answer']
+end_edge_node = EndEdgeNode()
+visualize_node = VisualizeNode()
+
+# register real nodes
+graph.add_node("greeting_message_node", greeting_message_node)
+graph.add_node("user_input_node", user_input_node)
+
+# passthrough nodes: identity function, so state in == state out.
+# These exist purely to give the decision a position in the graph; the
+# actual decision logic lives in the router callables above, wired in
+# via add_conditional_edges below — never passed to add_node.
+graph.add_node("operator_router_node", lambda state: state)
+graph.add_node("division_router_node", lambda state: state)
+
+graph.add_node("add_node", add_node)
+graph.add_node("subtract_node", subtract_node)
+graph.add_node("multiplier_node", multiplier_node)
+graph.add_node("division_node", division_node)
+
+graph.add_node("operator_error_node", operator_error_node)
+graph.add_node("division_error_node", division_error_node)
+
+graph.add_node("print_node", print_node)
+graph.add_node("end_edge_node", end_edge_node)
+graph.add_node("visualize_node", visualize_node)
+
+# fixed edges
+graph.add_edge(START, "greeting_message_node")
+graph.add_edge("greeting_message_node", "print_node")
+
+# user_input_node -> operator_router_node is a PLAIN edge (not conditional).
+# The decision happens one step later, once we're sitting at the
+# passthrough node — this is what makes it consistent with how division
+# is handled below.
+graph.add_edge("user_input_node", "operator_router_node")
+
+graph.add_conditional_edges(
+    "operator_router_node",       # source: the passthrough node
+    operator_router_node,         # router: the OperatorDecisionNode instance
+    {
+        "exit_node_edge": "end_edge_node",
+        "add_node_edge": "add_node",
+        "subtract_node_edge": "subtract_node",
+        "multiplier_node_edge": "multiplier_node",
+        "division_node_decision_edge": "division_router_node",
+        "operator_error_edge": "operator_error_node",
+    },
+)
+
+graph.add_conditional_edges(
+    "division_router_node",       # source: the passthrough node
+    division_router_node,         # router: the DivisionDecisionNode instance
+    {
+        "divide_by_zero_edge": "division_error_node",
+        "division_node_edge": "division_node",
+    },
+)
+
+# every node that produces an answer goes through the common print node
+graph.add_edge("add_node", "print_node")
+graph.add_edge("subtract_node", "print_node")
+graph.add_edge("multiplier_node", "print_node")
+graph.add_edge("division_node", "print_node")
+graph.add_edge("division_error_node", "print_node")
+graph.add_edge("operator_error_node", "print_node")
+graph.add_edge("end_edge_node", "print_node")
+
+# after printing: loop back for another round, or (on 'q') visualize and end
+graph.add_conditional_edges(
+    "print_node",                 # source: the real print node
+    post_print_router,            # router: the PostPrintDecisionNode instance
+    {
+        "continue_edge": "user_input_node",
+        "quit_edge": "visualize_node",
+    },
+)
+
+graph.add_edge("visualize_node", END)
+
+app = graph.compile()
+
+if __name__ == "__main__":
+    initial_state: AgentState = {
+        "num1": 0.0,
+        "num2": 0.0,
+        "operator": "",
+        "result": 0.0,
+        "answer": "",
+    }
+    # default recursion_limit (25) counts graph steps, not loop iterations —
+    # raised generously since this loop is meant to run until the user quits
+    app.invoke(initial_state, config={"recursion_limit": 1000})

@@ -119,7 +119,6 @@ class DivisionNode:
         state['answer'] = f"{state['num1']} {state['operator']} {state['num2']} = {state['result']}"
         return state
 
-
 class DivisionErrorNode:
     def __call__(self, state: AgentState) -> AgentState:
         state['result'] = 0

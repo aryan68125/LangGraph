@@ -7,6 +7,7 @@ import io
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
+# Global state that will manage the agent state in this program globally
 class AgentState(TypedDict):
     num1: float
     num2: float

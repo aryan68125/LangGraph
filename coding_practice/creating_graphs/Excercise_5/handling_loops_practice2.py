@@ -15,6 +15,7 @@ class AgentState(TypedDict):
     result: float
     answer: str
 
+# This node prints the graph created in Langgraph in matplotlib so that we can visualize it in the canvas in UI
 def visualize_graph() -> None:
     """Optional: call manually if you want to see the graph structure.
     Needs network access (LangGraph renders via the mermaid.ink API)."""
